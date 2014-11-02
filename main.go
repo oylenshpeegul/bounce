@@ -22,8 +22,12 @@ func main() {
 	}
 
 	// TODO: Get input file ext from the command line?
+	inext := ".flac"
+
 	// TODO: Get output file ext from the command line?
-	files := getFiles(indir, ".flac")
+	outext := ".mp3"
+
+	files := getFiles(indir, inext)
 
 	if len(files) == 0 {
 		fmt.Println("No files to process in", indir)
@@ -57,7 +61,7 @@ func main() {
 
 		outfile := path.Join(
 			outdir,
-			strings.Replace(f.Name(), ".flac", ".mp3", -1),
+			strings.Replace(f.Name(), inext, outext, -1),
 		)
 
 		fmt.Println("Task", i)
