@@ -11,13 +11,38 @@ import (
 	"sync"
 )
 
+const NumWorkers = 16
+
 func main() {
+
+	// TODO: Get input dir from the command line?
+	indir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// TODO: Get input file ext from the command line?
+	// TODO: Get output file ext from the command line?
+	files := getFiles(indir, ".flac")
+
+	if len(files) == 0 {
+		fmt.Println("No files to process in", indir)
+		os.Exit(1)
+	}
+
+	// TODO: Get output dir from the command line?
+	outdir := path.Join(indir, "mono")
+
+	err = os.Mkdir(outdir, 0770)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	tasks := make(chan *exec.Cmd, 64)
 
-	// spawn four worker goroutines
+	// spawn worker goroutines
 	var wg sync.WaitGroup
-	for i := 0; i < 4; i++ {
+	for i := 0; i < NumWorkers; i++ {
 		wg.Add(1)
 		go func() {
 			for cmd := range tasks {
@@ -27,23 +52,7 @@ func main() {
 		}()
 	}
 
-	indir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	outdir := path.Join(indir, "mono")
-
-	err = os.Mkdir(outdir, 0770)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(indir)
-	fmt.Println(outdir)
-
 	// generate some tasks
-	files := getFlacs(indir)
 	for i, f := range files {
 
 		outfile := path.Join(
@@ -51,10 +60,10 @@ func main() {
 			strings.Replace(f.Name(), ".flac", ".mp3", -1),
 		)
 
-		fmt.Println(f.Name())
-		fmt.Println(outfile)
+		fmt.Println("Task", i)
+		fmt.Println("  Converting", f.Name())
+		fmt.Println("  To", outfile)
 
-		fmt.Println("task", i, "converting", f.Name(), "to", outfile)
 		tasks <- exec.Command("sox", "-G", f.Name(), "-c", "1", outfile)
 	}
 	close(tasks)
@@ -63,9 +72,9 @@ func main() {
 	wg.Wait()
 }
 
-// getFlacs reads the given directory and returns those entries that
-// end in .flac.
-func getFlacs(dirName string) []os.FileInfo {
+// getFiles reads the given directory and returns a list of those
+// entries that end in the given fileExt.
+func getFiles(dirName string, fileExt string) []os.FileInfo {
 
 	entries, err := ioutil.ReadDir(dirName)
 	if err != nil {
@@ -75,8 +84,7 @@ func getFlacs(dirName string) []os.FileInfo {
 	files := []os.FileInfo{}
 
 	for _, entry := range entries {
-		//if strings.HasSuffix(entry.Name(), ".flac") {
-		if path.Ext(entry.Name()) == ".flac" {
+		if path.Ext(entry.Name()) == fileExt {
 			files = append(files, entry)
 		}
 	}
