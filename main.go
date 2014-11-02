@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 	"sync"
 )
@@ -26,10 +27,33 @@ func main() {
 		}()
 	}
 
+	indir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	outdir := path.Join(indir, "mono")
+
+	err = os.Mkdir(outdir, 0770)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(indir)
+	fmt.Println(outdir)
+
 	// generate some tasks
-	files := getFlacs(".")
+	files := getFlacs(indir)
 	for i, f := range files {
-		outfile := strings.Replace(f.Name(), ".flac", ".mp3", -1)
+
+		outfile := path.Join(
+			outdir,
+			strings.Replace(f.Name(), ".flac", ".mp3", -1),
+		)
+
+		fmt.Println(f.Name())
+		fmt.Println(outfile)
+
 		fmt.Println("task", i, "converting", f.Name(), "to", outfile)
 		tasks <- exec.Command("sox", "-G", f.Name(), "-c", "1", outfile)
 	}
@@ -51,7 +75,8 @@ func getFlacs(dirName string) []os.FileInfo {
 	files := []os.FileInfo{}
 
 	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".flac") {
+		//if strings.HasSuffix(entry.Name(), ".flac") {
+		if path.Ext(entry.Name()) == ".flac" {
 			files = append(files, entry)
 		}
 	}
