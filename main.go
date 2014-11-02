@@ -16,6 +16,7 @@ const NumWorkers = 16
 
 func main() {
 
+	// Get options from the command line.
 	indir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
@@ -44,9 +45,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Spawn workers.
 	tasks := make(chan *exec.Cmd, 64)
 
-	// spawn worker goroutines
 	var wg sync.WaitGroup
 	for i := 0; i < NumWorkers; i++ {
 		wg.Add(1)
@@ -58,23 +59,21 @@ func main() {
 		}()
 	}
 
-	// generate some tasks
-	for i, f := range files {
+	// Generate tasks.
+	for _, f := range files {
 
 		outfile := path.Join(
 			outdir,
 			strings.Replace(f.Name(), *inext, *outext, -1),
 		)
 
-		fmt.Println("Task", i)
-		fmt.Println("  Converting", f.Name())
-		fmt.Println("  To", outfile)
-
-		tasks <- exec.Command("sox", "-G", f.Name(), "-c", "1", outfile)
+		cmd := []string{"sox", "-G", f.Name(), "-c", "1", outfile}
+		fmt.Println(cmd)
+		tasks <- exec.Command(cmd[0], cmd[1:]...)
 	}
 	close(tasks)
 
-	// wait for the workers to finish
+	// Wait for the workers to finish.
 	wg.Wait()
 }
 
