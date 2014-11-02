@@ -16,21 +16,16 @@ const NumWorkers = 16
 
 func main() {
 
-	// TODO: Get input dir from the command line?
 	indir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
+	flag.StringVar(&indir, "indir", indir, "input directory")
 
-	// TODO: Get input file ext from the command line?
-	//inext := ".flac"
 	var inext = flag.String("inext", ".flac", "input file extension")
-
-	// TODO: Get output file ext from the command line?
-	//outext := ".mp3"
 	var outext = flag.String("outext", ".mp3", "output file extension")
 
-	files := getFiles(indir, inext)
+	files := getFiles(indir, *inext)
 
 	if len(files) == 0 {
 		fmt.Println("No files to process in", indir)
@@ -39,6 +34,9 @@ func main() {
 
 	// TODO: Get output dir from the command line?
 	outdir := path.Join(indir, "mono")
+	flag.StringVar(&outdir, "outdir", outdir, "output directory")
+
+	flag.Parse()
 
 	err = os.Mkdir(outdir, 0770)
 	if err != nil {
@@ -64,7 +62,7 @@ func main() {
 
 		outfile := path.Join(
 			outdir,
-			strings.Replace(f.Name(), inext, outext, -1),
+			strings.Replace(f.Name(), *inext, *outext, -1),
 		)
 
 		fmt.Println("Task", i)
