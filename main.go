@@ -23,22 +23,23 @@ func main() {
 	flag.StringVar(&indir, "indir", indir, "input directory")
 
 	var inext = flag.String("inext", ".flac", "input file extension")
+
+	outdir := path.Join(indir, "mono")
+	flag.StringVar(&outdir, "outdir", outdir, "output directory")
+
 	var outext = flag.String("outext", ".mp3", "output file extension")
 
-	files := getFiles(indir, *inext)
+	flag.Parse()
 
+	// Make sure we have files to process before creating the output
+	// directory.
+	files := getFiles(indir, *inext)
 	if len(files) == 0 {
 		fmt.Println("No files to process in", indir)
 		os.Exit(1)
 	}
 
-	// TODO: Get output dir from the command line?
-	outdir := path.Join(indir, "mono")
-	flag.StringVar(&outdir, "outdir", outdir, "output directory")
-
-	flag.Parse()
-
-	err = os.Mkdir(outdir, 0770)
+	err = os.MkdirAll(outdir, 0770)
 	if err != nil {
 		log.Fatal(err)
 	}
