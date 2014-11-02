@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -22,10 +23,12 @@ func main() {
 	}
 
 	// TODO: Get input file ext from the command line?
-	inext := ".flac"
+	//inext := ".flac"
+	var inext = flag.String("inext", ".flac", "input file extension")
 
 	// TODO: Get output file ext from the command line?
-	outext := ".mp3"
+	//outext := ".mp3"
+	var outext = flag.String("outext", ".mp3", "output file extension")
 
 	files := getFiles(indir, inext)
 
