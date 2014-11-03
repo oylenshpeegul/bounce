@@ -40,7 +40,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = os.MkdirAll(outdir, 0770)
+	err = os.MkdirAll(outdir, 0775)
 	if err != nil {
 		log.Fatal(err)
 	}
