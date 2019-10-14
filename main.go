@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -24,6 +25,8 @@ func main() {
 	flag.StringVar(&indir, "indir", indir, "input directory")
 
 	var inext = flag.String("inext", ".flac", "input file extension")
+
+	numchan := flag.Int("numchan", 1, "number of channels to convert to")
 
 	outdir := path.Join(indir, "mono")
 	flag.StringVar(&outdir, "outdir", outdir, "output directory")
@@ -67,7 +70,14 @@ func main() {
 			strings.Replace(f.Name(), *inext, *outext, -1),
 		)
 
-		cmd := []string{"sox", "-G", f.Name(), "-c", "1", outfile}
+		cmd := []string{
+			"sox",
+			"-G",
+			f.Name(),
+			"-c",
+			strconv.Itoa(numchan),
+			outfile,
+		}
 		fmt.Println(cmd)
 		tasks <- exec.Command(cmd[0], cmd[1:]...)
 	}
