@@ -28,7 +28,7 @@ func main() {
 
 	numchan := flag.Int("numchan", 1, "number of channels to convert to")
 
-	outdir := path.Join(indir, "mono")
+	outdir := path.Join(indir, "bounced")
 	flag.StringVar(&outdir, "outdir", outdir, "output directory")
 
 	var outext = flag.String("outext", ".mp3", "output file extension")
@@ -75,7 +75,7 @@ func main() {
 			"-G",
 			f.Name(),
 			"-c",
-			strconv.Itoa(numchan),
+			strconv.Itoa(*numchan),
 			outfile,
 		}
 		fmt.Println(cmd)
