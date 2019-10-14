@@ -27,7 +27,7 @@ bounce
 
 ## Example 2
 
-If I want to make a mono CD, I first have to convert to mono, then convert to stereo. Both channels end up the same, of course, but [this is required by the CDDA standard](https://en.wikipedia.org/wiki/Compact_Disc_Digital_Audio).
+If I want to make a mono CD, I first have to convert to mono, then convert to stereo. Both channels end up the same, of course, which is frustratingly wasteful, but [this is required by the CDDA standard](https://en.wikipedia.org/wiki/Compact_Disc_Digital_Audio).
 
 1. Convert all the .flac files in the current working directory to mono
 .wav files in the `bounced` directory.
