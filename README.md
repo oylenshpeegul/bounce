@@ -10,6 +10,11 @@ plays in both channels. I've been doing this for some time now with a
 Perl script that does all the songs in a given directory
 sequentially. This version, written in Go, does them concurrently.
 
+## Install
+```
+go get -u github.com/oylenshpeegul/bounce
+```
+
 ## Example 1
 
 Convert all the .flac files in the current working directory to mono
