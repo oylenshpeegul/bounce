@@ -10,9 +10,18 @@ plays in both channels. I've been doing this for some time now with a
 Perl script that does all the songs in a given directory
 sequentially. This version, written in Go, does them concurrently.
 
-## Install
+## Dependencies
+
+It calls [SoX](http://sox.sourceforge.net/), which requires [LAME](https://lame.sourceforge.io/) for MP3 support. On Debian, I ran
+
 ```
-go get -u github.com/oylenshpeegul/bounce
+sudo apt install sox libsox-fmt-mp3
+```
+
+## Install
+
+```
+go install github.com/oylenshpeegul/bounce@latest
 ```
 
 ## Example 1
